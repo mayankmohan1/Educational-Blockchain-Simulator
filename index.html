@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlockCraft JS - Interactive Blockchain Architecture Simulator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand-wrapper">
+                <span class="brand-logo">⚡</span>
+                <div>
+                    <h1 class="brand-title">BlockCraft JS</h1>
+                    <span class="brand-tagline">Hands-on Blockchain Architecture & Distributed Ledger Simulator</span>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button id="btn-toggle-sound" class="btn-pill" aria-label="Toggle Sound">🔊 Sound: On</button>
+                <button id="btn-start-tour" class="btn-pill btn-tour">🎓 Start Live Demo Tour</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Ribbon -->
+    <section class="stats-ribbon">
+        <div class="stats-container">
+            <div class="stat-item">
+                <span class="stat-label">Chain Height:</span>
+                <span class="stat-val" id="stat-total-blocks">0 Blocks</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Mempool Queue:</span>
+                <span class="stat-val" id="stat-mempool-count">0 Unconfirmed</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">PoW Difficulty:</span>
+                <span class="stat-val" id="stat-difficulty">2 leading 0s</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Consensus Status:</span>
+                <span class="stat-val" id="stat-network-health">
+                    <span class="status-dot green"></span> 100% Valid
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nav Tabs -->
+    <nav class="nav-tabs-wrapper">
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="hash">
+                <span>#️⃣</span> 1. Cryptographic Hasher
+            </button>
+            <button class="nav-tab" data-tab="block">
+                <span>📦</span> 2. Block & Mining
+            </button>
+            <button class="nav-tab" data-tab="chain">
+                <span>⛓️</span> 3. Visual Blockchain
+            </button>
+            <button class="nav-tab" data-tab="mempool">
+                <span>📬</span> 4. Mempool & Transfers
+            </button>
+            <button class="nav-tab" data-tab="network">
+                <span>🌐</span> 5. P2P Network
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+
+        <!-- TAB 1: Cryptographic Hasher -->
+        <section id="tab-hash" class="tab-pane active">
+            <div class="section-header">
+                <h2>1. Cryptographic Hashing (SHA-256)</h2>
+                <p>The foundation of all blockchain technology. SHA-256 transforms any arbitrary input into a unique 64-character hexadecimal digest. It is deterministic, one-way, and exhibits the <em>Avalanche Effect</em>.</p>
+            </div>
+
+            <div class="hash-grid">
+                <!-- Live Hashing Sandbox -->
+                <div class="glass-panel">
+                    <h3>Interactive Hash Sandbox</h3>
+                    <p class="field-hint" style="margin-bottom: 12px;">Type anything below to compute its SHA-256 digest in real-time.</p>
+                    
+                    <label for="hash-sandbox-input">Input Data:</label>
+                    <textarea id="hash-sandbox-input" rows="4" placeholder="Type text, json, or numbers here...">Hello Blockchain! Cryptography secures Web3.</textarea>
+
+                    <div class="hash-output-box">
+                        <label>SHA-256 Cryptographic Hash (256-bit Digest):</label>
+                        <div class="hash-string mono" id="hash-sandbox-output">Computing...</div>
+                        
+                        <div class="hash-breakdown" id="hash-hex-breakdown">
+                            <!-- Visual highlight of prefix, middle, suffix -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avalanche Effect Simulator -->
+                <div class="glass-panel">
+                    <h3>The Avalanche Effect Simulator</h3>
+                    <p class="field-hint" style="margin-bottom: 12px;">Notice how modifying even 1 single character or punctuation mark flips roughly ~50% of the entire 256 output bits!</p>
+
+                    <div style="margin-bottom: 12px;">
+                        <label>Input A:</label>
+                        <input type="text" id="avalanche-input-1" value="Send 10 BTC to Satoshi">
+                        <div class="mono small" style="color: var(--text-dim); margin-top: 4px;" id="avalanche-hash-1">...</div>
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                        <label>Input B (Single character change):</label>
+                        <input type="text" id="avalanche-input-2" value="Send 10 BTC to satoshi">
+                        <div class="mono small" style="color: var(--text-dim); margin-top: 4px;" id="avalanche-hash-2">...</div>
+                    </div>
+
+                    <div class="avalanche-container">
+                        <div class="avalanche-meter">
+                            <div class="meter-fill" id="avalanche-progress-bar"></div>
+                        </div>
+                        <div id="avalanche-diff-score" style="font-size: 13px;">Calculating bit diff...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: Single Block & Proof of Work -->
+        <section id="tab-block" class="tab-pane">
+            <div class="section-header">
+                <h2>2. Block Anatomy & Proof-of-Work (PoW) Simulator</h2>
+                <p>A block packages data with a timestamp, index, previous hash, and a <strong>Nonce</strong>. Proof-of-Work requires miners to cycle nonces until the resulting hash satisfies the difficulty target (e.g. leading zeros).</p>
+            </div>
+
+            <div class="single-block-layout">
+                <!-- Block Card -->
+                <div class="block-card valid" id="single-block-card">
+                    <div class="card-header-flex">
+                        <h3>Block #1 (Single Block Sandbox)</h3>
+                        <span id="sb-status-badge" class="badge badge-success">✅ VALID (Target Met)</span>
+                    </div>
+
+                    <div class="block-field">
+                        <label>Block Number (Index):</label>
+                        <div class="val mono">1</div>
+                    </div>
+
+                    <div class="block-field">
+                        <label>Nonce (Number used Once):</label>
+                        <input type="number" id="sb-nonce" value="0">
+                        <span class="field-hint">Miners increment this number continuously to solve the PoW puzzle.</span>
+                    </div>
+
+                    <div class="block-field">
+                        <label>Data Payload:</label>
+                        <textarea id="sb-data" rows="3">Alice sent 5 COIN to Bob for services rendered.</textarea>
+                    </div>
+
+                    <div class="block-field">
+                        <label>Previous Hash:</label>
+                        <div class="val mono small" style="color: var(--text-dim);">0000000000000000000000000000000000000000000000000000000000000000</div>
+                    </div>
+
+                    <div class="block-field">
+                        <label>Computed Block Hash:</label>
+                        <div class="val mono valid-hash" id="sb-hash">0000...</div>
+                    </div>
+                </div>
+
+                <!-- Mining Control Panel -->
+                <div class="glass-panel">
+                    <h3>Proof-of-Work Miner Controls</h3>
+                    <p class="field-hint" style="margin-bottom: 16px;">Increase the difficulty to see how exponential hashing effort protects the network.</p>
+
+                    <div style="margin-bottom: 20px;">
+                        <label>Difficulty Target (<span id="sb-diff-val" style="color: var(--warning-gold); font-weight: bold;">2</span> Leading Zeros):</label>
+                        <input type="range" id="sb-diff" min="1" max="4" value="2" step="1">
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim);">
+                            <span>1 Zero (Instant)</span>
+                            <span>2 Zeros (Fast)</span>
+                            <span>3 Zeros (Medium)</span>
+                            <span>4 Zeros (Intense)</span>
+                        </div>
+                    </div>
+
+                    <button id="sb-mine-btn" class="btn-primary" style="width: 100%;">
+                        ⛏️ Mine This Block
+                    </button>
+
+                    <div class="mining-metrics">
+                        <div class="metric-box">
+                            <span class="label">Mining Duration:</span>
+                            <div class="val" id="sb-mining-time">0 ms</div>
+                        </div>
+                        <div class="metric-box">
+                            <span class="label">Hash Rate:</span>
+                            <div class="val" id="sb-hashrate">0 H/s</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px; font-size: 12px; color: var(--text-muted);">
+                        💡 <strong>Key Takeaway:</strong> Notice how adding just 1 extra zero to the difficulty target multiplies the average number of attempts by roughly <strong>16x</strong> (hexadecimal base-16)!
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: Visual Blockchain Ledger -->
+        <section id="tab-chain" class="tab-pane">
+            <div class="section-header">
+                <h2>3. Live Visual Blockchain & Tamper Cascade</h2>
+                <p>Each block stores the cryptographic hash of the block before it. If any data in a past block is edited, its hash changes, breaking the link to all subsequent blocks instantly.</p>
+            </div>
+
+            <div class="chain-toolbar">
+                <div style="display: flex; gap: 10px;">
+                    <button id="btn-add-block" class="btn-primary">➕ Add New Block</button>
+                    <button id="btn-remine-chain" class="btn-secondary">⚡ Re-Mine Whole Chain</button>
+                    <button id="btn-reset-chain" class="btn-secondary">🔄 Reset Ledger</button>
+                </div>
+                <div style="font-size: 13px; color: var(--text-muted);">
+                    Scroll horizontally to inspect the full chain ➔
+                </div>
+            </div>
+
+            <!-- Horizontal Scrollable Chain -->
+            <div class="chain-scroll-container" id="blockchain-container">
+                <!-- Block cards rendered dynamically by app.js -->
+            </div>
+
+            <!-- Diagnostics Box -->
+            <div id="chain-diagnostic-box" class="diagnostic-box valid">
+                <!-- Updated live by app.js -->
+            </div>
+        </section>
+
+        <!-- TAB 4: Mempool & Transaction Studio -->
+        <section id="tab-mempool" class="tab-pane">
+            <div class="section-header">
+                <h2>4. Transaction Studio & Mempool (Memory Pool)</h2>
+                <p>Transactions wait in the unconfirmed memory pool before miners package them into blocks. Track balances, calculate gas fees, and mine batches into the blockchain.</p>
+            </div>
+
+            <!-- Live Wallet Balances -->
+            <div class="glass-panel" style="margin-bottom: 24px;">
+                <h3>Active Participant Wallets & Confirmed Balances</h3>
+                <div class="wallet-balances-grid" id="wallet-balances-grid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <div class="mempool-layout">
+                <!-- Create Transaction Form -->
+                <div class="glass-panel">
+                    <h3>Create & Broadcast Transaction</h3>
+                    <p class="field-hint" style="margin-bottom: 16px;">Submit a new value transfer to the peer mempool.</p>
+
+                    <form id="form-create-tx">
+                        <div style="margin-bottom: 14px;">
+                            <label for="tx-sender">Sender Address / Wallet:</label>
+                            <select id="tx-sender" required></select>
+                        </div>
+
+                        <div style="margin-bottom: 14px;">
+                            <label for="tx-receiver">Receiver Address / Wallet:</label>
+                            <select id="tx-receiver" required></select>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                            <div>
+                                <label for="tx-amount">Amount (COIN):</label>
+                                <input type="number" id="tx-amount" min="0.1" step="0.1" value="5.0" required>
+                            </div>
+                            <div>
+                                <label for="tx-fee">Miner Priority Fee:</label>
+                                <input type="number" id="tx-fee" min="0.00" step="0.01" value="0.05">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 10px;">
+                            <button type="submit" class="btn-primary" style="flex: 1;">
+                                🚀 Send to Mempool
+                            </button>
+                            <button type="button" id="btn-fill-preset-tx" class="btn-secondary">
+                                🎲 Preset Example
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Mempool Queue -->
+                <div class="glass-panel">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3>Pending Mempool Queue (<span id="mempool-badge-count">0</span>)</h3>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label style="margin: 0; font-size: 11px;">Miner Wallet:</label>
+                            <select id="mempool-miner-wallet" style="width: auto; padding: 4px 8px; font-size: 12px;"></select>
+                        </div>
+                    </div>
+
+                    <div class="mempool-queue" id="mempool-queue">
+                        <!-- Populated by app.js -->
+                    </div>
+
+                    <div style="margin-top: 16px;">
+                        <button id="btn-mine-mempool" class="btn-primary" style="width: 100%;">
+                            ⛏️ Mine Pending Transactions into New Block
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: P2P Multi-Node Consensus -->
+        <section id="tab-network" class="tab-pane">
+            <div class="section-header">
+                <h2>5. Peer-to-Peer (P2P) Network & Nakamoto Consensus</h2>
+                <p>Simulate 3 independent global nodes. Corrupt or fork one node’s local ledger and trigger <strong>Nakamoto Consensus</strong> to watch the network automatically reject the tampered chain in favor of the longest valid cryptographic ledger.</p>
+            </div>
+
+            <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                <button id="btn-sync-all-nodes" class="btn-primary">
+                    🌐 Force Global Network Synchronization (Longest Chain)
+                </button>
+                <div style="font-size: 13px; color: var(--text-muted);">
+                    Decentralization Rule: The longest valid chain with the most accumulated Proof-of-Work wins.
+                </div>
+            </div>
+
+            <!-- Nodes Grid -->
+            <div class="p2p-nodes-grid" id="p2p-nodes-grid">
+                <!-- Node Alpha, Node Beta, Node Gamma rendered dynamically -->
+            </div>
+
+            <!-- Network Event Feed -->
+            <div class="glass-panel">
+                <h3>Live Network Broadcast & Gossip Log</h3>
+                <div id="p2p-event-feed" style="margin-top: 12px; font-family: var(--font-mono); font-size: 12px;">
+                    <!-- Event logs -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Guided Live Demo Tour Modal -->
+    <div id="tutorial-overlay" class="tutorial-overlay hidden">
+        <div class="tutorial-progress">
+            <div class="tutorial-progress-bar" id="tutorial-progress-bar"></div>
+        </div>
+        <div class="tutorial-content">
+            <div class="tutorial-header">
+                <div>
+                    <span class="tutorial-badge" id="tutorial-badge">Chapter 1/6</span>
+                    <h3 id="tutorial-title" style="margin-top: 2px;">Welcome to BlockCraft JS</h3>
+                </div>
+                <button id="tutorial-close" class="tutorial-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="tutorial-body" id="tutorial-body">
+                <!-- Rendered dynamically -->
+            </div>
+            <div class="tutorial-footer">
+                <button id="tutorial-prev" class="btn-secondary" disabled>➔ Previous</button>
+                <button id="tutorial-next" class="btn-primary">Next Lesson ➔</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Module Entry Point -->
+    <script type="module" src="src/ui/app.js"></script>
+</body>
+</html>
